@@ -1,18 +1,18 @@
 {% extends 'posts/base.html' %}
 {% block title %}Add Comment{% endblock %}
 {% block content %}
-<h1>Add Comment to "{{ post.title }}"</h1>
+<h1>Добавить комментарий к "{{ post.title }}"</h1>
 <form method="post">
     {% csrf_token %}
     <div class="mb-3">
-        <label for="author" class="form-label">Author</label>
+        <label for="author" class="form-label">Автор</label>
         <input type="text" class="form-control" id="author" name="author" required>
     </div>
     <div class="mb-3">
-        <label for="text" class="form-label">Comment</label>
+        <label for="text" class="form-label">Комментарий</label>
         <textarea class="form-control" id="text" name="text" rows="3" required></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary">Cancel</a>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+    <a href="{% url 'post_detail' post.id %}" class="btn btn-secondary">Отмена</a>
 </form>
 {% endblock %}

@@ -1,31 +1,83 @@
 {% extends 'posts/base.html' %}
 {% block title %}Posts{% endblock %}
 {% block content %}
-<h1>All Posts</h1>
+<h1>Все посты</h1>
+
+<div class="mb-3">
+    <label for="categoryFilter" class="form-label">Фильтр по категориям:</label>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'index' %}{% if search_query %}?search={{ search_query }}{% endif %}" 
+           class="btn {% if not selected_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            Все категории
+        </a>
+        {% for category in categories %}
+        <a href="{% url 'index' %}?category={{ category.id }}{% if search_query %}&search={{ search_query }}{% endif %}" 
+           class="btn {% if selected_category.id == category.id %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mb-4">
+    <form method="get" class="input-group">
+        <input
+            type="text"
+            class="form-control"
+            name="search"
+            placeholder="Поиск по статьям..."
+            value="{{ search_query }}"
+        >
+        {% if category_id %}
+        <input type="hidden" name="category" value="{{ category_id }}">
+        {% endif %}
+        <button class="btn btn-primary" type="submit">Поиск</button>
+        {% if search_query %}
+        <a href="{% url 'index' %}{% if selected_category %}?category={{ selected_category.id }}{% endif %}" class="btn btn-secondary">Очистить</a>
+        {% endif %}
+    </form>
+    {% if search_query %}
+    <p class="text-muted mt-2">Результаты поиска по: "<strong>{{ search_query }}</strong>"</p>
+    {% endif %}
+</div>
+
 <div class="row">
     {% for post in page_obj %}
     <div class="col-md-12 mb-4">
         <div class="card">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}">
+            {% endif %}
             <div class="card-body">
                 <h5 class="card-title"><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h5>
+                {% if post.category %}
+                <span class="badge bg-info mb-2">{{ post.category.name }}</span>
+                {% endif %}
                 <p class="card-text">{{ post.content|truncatechars:200 }}</p>
-                <p class="text-muted">Created at: {{ post.created_at }}</p>
+                <p class="text-muted">Создан: {{ post.created_at }}</p>
             </div>
         </div>
     </div>
+    {% empty %}
+    <div class="col-md-12">
+        <p class="text-muted">Статей не найдено.</p>
+    </div>
     {% endfor %}
 </div>
+
+{% if page_obj.paginator.num_pages > 1 %}
 <nav aria-label="Page navigation">
     <ul class="pagination">
         {% if page_obj.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
-        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}">&laquo; Первая</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}">Предыдущая</a></li>
         {% endif %}
-        <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+        <li class="page-item disabled"><span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span></li>
         {% if page_obj.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}">Следующая</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if category_id %}&category={{ category_id }}{% endif %}">Последняя &raquo;</a></li>
         {% endif %}
     </ul>
 </nav>
+{% endif %}
 {% endblock %}
