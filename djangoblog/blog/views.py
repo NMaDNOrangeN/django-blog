@@ -7,22 +7,22 @@ from .models import Post, Comment, Category
 
 def index(request):
     posts = Post.objects.all().order_by("-created_at")
-    
+
     category_id = request.GET.get("category")
     if category_id:
         posts = posts.filter(category_id=category_id)
-    
+
     search_query = request.GET.get("search", "")
     if search_query:
         posts = posts.filter(
             Q(title__icontains=search_query) | Q(content__icontains=search_query)
         )
-    
+
     categories = Category.objects.all()
     selected_category = None
     if category_id:
         selected_category = get_object_or_404(Category, id=category_id)
-    
+
     paginator = Paginator(posts, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -68,6 +68,3 @@ def add_comment(request, post_id):
         else:
             messages.error(request, "Пожалуйста, заполните все поля.")
     return render(request, "posts/add_comment.html", {"post": post})
-
-
-

@@ -13,7 +13,8 @@
         <p class="card-text">{{ post.content }}</p>
         <p class="text-muted">Создан: {{ post.created_at }}</p>
         <p class="text-muted">
-            <a href="{% url 'index' %}{% if post.category %}?category={{ post.category.id }}{% endif %}" class="link-secondary">← Вернуться к списку</a>
+            <a href="{% url 'index' %}{% if post.category %}?category={{ post.category.id }}{% endif %}"
+                class="link-secondary">← Вернуться к списку</a>
         </p>
     </div>
 </div>

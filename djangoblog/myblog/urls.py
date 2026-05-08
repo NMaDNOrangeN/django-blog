@@ -21,9 +21,11 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 def redirect_to_blog(request):
     response = redirect("blog/")
     return response
+
 
 urlpatterns = [
     path("", redirect_to_blog),
